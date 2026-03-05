@@ -1087,6 +1087,29 @@ ren <- ren_tech %>%
   left_join(ren_source, by = "UPRN", suffix = c("", "_SOURCE")) %>%
   left_join(ren_timestamp, by = "UPRN", suffix = c("", "_TIMESTAMP"))
 
+ren <- ren %>%
+  select(
+    UPRN, SOLAR_PV, BATTERY, ASHP, BIO_BOILER, SOLAR_THERMAL,
+    RENEWABLE_COUNT, SOLAR_PV_SOURCE, BATTERY_SOURCE, 
+    ASHP_SOURCE, BIO_BOILER_SOURCE, SOLAR_THERMAL_SOURCE,
+    SOLAR_PV_TIMESTAMP, BATTERY_TIMESTAMP, ASHP_TIMESTAMP,
+    BIO_BOILER_TIMESTAMP, SOLAR_THERMAL_TIMESTAMP
+  )
+
+# Check we have the same columns as we expect
+ren_old <- read.csv("J:/HA GOL/HEED/HEED_ren.csv")
+new_cols <- setdiff(ren_new, colnames(ren_old))
+
+if (length(new_cols) > 0) {
+  stop(
+    paste(
+      "We have some new columns in HEED renewables data which won't be saved now. 
+      Add these to the selection of cols:",
+      paste(new_cols, collapse = ", ")
+    )
+  )
+}
+
 rm(whs_data, heeps_data, ren_tech, ren_source)
 
 # Save locally for speed and can always upload to somewhere centrally or change this to be a network drive and take a little longer
